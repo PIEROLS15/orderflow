@@ -1,0 +1,26 @@
+services:
+  pg-orderflow:
+    image: docker.io/bitnami/postgresql:latest
+    container_name: orderflow-postgres
+    hostname: pg-orderflow
+    restart: unless-stopped
+    ports:
+      - "15432:5432"
+    environment:
+      POSTGRESQL_DATABASE: db_orderflow
+      POSTGRESQL_USERNAME: postgres
+      POSTGRESQL_PASSWORD: pgpass321
+      TZ: America/Lima
+      PGTZ: America/Lima
+    volumes:
+      - pg-orderflow-data:/bitnami/postgresql
+      - ../sql/init.sql:/docker-entrypoint-initdb.d/init.sql:Z
+    networks:
+      - orderflow-net
+
+networks:
+  orderflow-net:
+    external: true
+
+volumes:
+  pg-orderflow-data:

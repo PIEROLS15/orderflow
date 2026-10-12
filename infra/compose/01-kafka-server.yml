@@ -1,0 +1,67 @@
+services:
+  zookeeper:
+    image: docker.io/confluentinc/cp-zookeeper:7.7.1
+    container_name: orderflow-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - orderflow-net
+
+  kafka-broker-1:
+    image: docker.io/confluentinc/cp-kafka:7.7.1
+    container_name: orderflow-kafka-broker-1
+    depends_on:
+      - zookeeper
+    ports:
+      - "19092:19092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker-1:9092,PLAINTEXT_INTERNAL://localhost:19092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    networks:
+      - orderflow-net
+
+  schema-registry:
+    image: docker.io/confluentinc/cp-schema-registry:7.7.1
+    container_name: orderflow-schema-registry
+    depends_on:
+      - kafka-broker-1
+    ports:
+      - "8081:8081"
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka-broker-1:9092
+    networks:
+      - orderflow-net
+
+  akhq:
+    image: docker.io/tchiotludo/akhq:latest
+    container_name: orderflow-akhq
+    restart: unless-stopped
+    depends_on:
+      - kafka-broker-1
+      - schema-registry
+    ports:
+      - "8080:8080"
+    environment:
+      AKHQ_CONFIGURATION: |
+        akhq:
+          connections:
+            orderflow:
+              properties:
+                bootstrap.servers: "kafka-broker-1:9092"
+              schema-registry:
+                url: "http://schema-registry:8081"
+    networks:
+      - orderflow-net
+
+networks:
+  orderflow-net:
+    external: true
