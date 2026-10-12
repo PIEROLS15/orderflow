@@ -1,0 +1,51 @@
+quarkus:
+  http:
+    port: 8080
+    auth:
+      permission:
+        public:
+          paths: /auth/token,/api/products,/api/products/*,/q/*
+          policy: permit
+        authenticated:
+          paths: /api/*
+          policy: authenticated
+  datasource:
+    db-kind: postgresql
+    username: ${QUARKUS_DATASOURCE_USERNAME:postgres}
+    password: ${QUARKUS_DATASOURCE_PASSWORD:pgpass321}
+    jdbc:
+      url: ${QUARKUS_DATASOURCE_JDBC_URL:jdbc:postgresql://localhost:15432/db_orderflow}
+  hibernate-orm:
+    schema-management:
+      strategy: none
+    log:
+      sql: false
+  rest-client:
+    external-auth-api:
+      url: https://api.escuelajs.co
+      scope: jakarta.inject.Singleton
+  swagger-ui:
+    always-include: true
+  log:
+    category:
+      com.nttdata.orderflow:
+        level: DEBUG
+
+mp:
+  jwt:
+    verify:
+      publickey:
+        location: publicKey.pem
+      issuer: orderflow-api
+
+smallrye:
+  jwt:
+    sign:
+      key:
+        location: privateKey.pem
+
+orderflow:
+  kafka:
+    topic: order-confirmed-topic
+    bootstrap-servers: ${ORDERFLOW_KAFKA_BOOTSTRAP_SERVERS:localhost:19092}
+    schema-registry-url: ${ORDERFLOW_SCHEMA_REGISTRY_URL:http://localhost:8081}
