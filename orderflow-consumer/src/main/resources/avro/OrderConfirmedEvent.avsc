@@ -1,0 +1,13 @@
+{
+  "name": "OrderConfirmedEvent",
+  "namespace": "com.nttdata.orderflow.avro",
+  "type": "record",
+  "fields": [
+    { "name": "orderId", "type": ["null", "string"], "default": null },
+    { "name": "customerId", "type": ["null", "string"], "default": null },
+    { "name": "customerEmail", "type": ["null", "string"], "default": null },
+    { "name": "totalAmount", "type": ["null", "double"], "default": null },
+    { "name": "status", "type": ["null", "string"], "default": null },
+    { "name": "confirmedAt", "type": ["null", "string"], "default": null }
+  ]
+}

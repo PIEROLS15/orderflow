@@ -1,0 +1,25 @@
+quarkus:
+  http:
+    port: 8080
+  datasource:
+    db-kind: postgresql
+    username: ${QUARKUS_DATASOURCE_USERNAME:postgres}
+    password: ${QUARKUS_DATASOURCE_PASSWORD:pgpass321}
+    jdbc:
+      url: ${QUARKUS_DATASOURCE_JDBC_URL:jdbc:postgresql://localhost:15432/db_orderflow}
+  hibernate-orm:
+    schema-management:
+      strategy: none
+    log:
+      sql: false
+  log:
+    category:
+      com.nttdata.orderflow.consumer:
+        level: DEBUG
+
+orderflow:
+  kafka:
+    topic: order-confirmed-topic
+    bootstrap-servers: ${ORDERFLOW_KAFKA_BOOTSTRAP_SERVERS:localhost:19092}
+    schema-registry-url: ${ORDERFLOW_SCHEMA_REGISTRY_URL:http://localhost:8081}
+    group-id: orderflow-consumer-cg01
