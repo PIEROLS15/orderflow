@@ -1,0 +1,36 @@
+meta {
+  name: 03 Create Product
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/products
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "Webcam HD",
+    "description": "Camara para reuniones",
+    "price": 120.00,
+    "stock": 12,
+    "active": true
+  }
+}
+
+script:post-response {
+  const body = res.getBody();
+  if (body && body.id) {
+    bru.setEnvVar("productId", body.id);
+  }
+}

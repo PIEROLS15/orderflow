@@ -1,0 +1,19 @@
+meta {
+  name: 04 Search Customer By Email
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/customers/search?email=piero.llanos@gmail.com
+  body: none
+  auth: bearer
+}
+
+params:query {
+  email: piero.llanos@gmail.com
+}
+
+auth:bearer {
+  token: {{token}}
+}

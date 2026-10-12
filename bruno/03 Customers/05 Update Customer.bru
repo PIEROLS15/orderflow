@@ -1,0 +1,28 @@
+meta {
+  name: 05 Update Customer
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{baseUrl}}/api/customers/{{customerId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "firstName": "Piero",
+    "lastName": "llanos",
+    "email": "piero.llanos@gmail.com",
+    "documentNumber": "76543210"
+  }
+}
